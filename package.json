@@ -1,0 +1,14 @@
+{
+  "name": "openroboto-operator-docs",
+  "description": "OpenRoboto operator guide (zh / en)",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "markdown-it-task-lists": "^2.1.1",
+    "vitepress": "^1.6.3"
+  },
+  "private": true
+}
