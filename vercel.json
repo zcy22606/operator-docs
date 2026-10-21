@@ -1,0 +1,9 @@
+{
+  "framework": null,
+  "installCommand": "npm ci",
+  "buildCommand": "DOCS_BASE=/operator-docs/ vitepress build docs --outDir dist/operator-docs && cp dist/operator-docs/404.html dist/404.html",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "redirects": [{ "source": "/", "destination": "/operator-docs/", "permanent": false }],
+  "headers": [{ "source": "/(.*)", "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }] }]
+}

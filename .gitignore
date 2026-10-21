@@ -4,3 +4,7 @@ docs/.vitepress/dist/
 .DS_Store
 *.zip
 *单文件版.html
+dist/
+.vercel/
+.vercel
+.env*

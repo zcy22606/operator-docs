@@ -50,38 +50,25 @@ docs/
 
 ## 部署
 
-站点是纯静态文件（`docs/.vitepress/dist`），任何静态托管都能用。不依赖 Google 字体等境外资源，搜索也是本地的。
+线上地址：<https://shift.openroboto.ai/operator-docs/>，要密码。
 
-### 方案一：GitHub Pages（最快）
+- 站点是 Vercel 项目 `operator-docs`（team `kevinkk2050-s-team`），生产域名 `operator-docs.vercel.app`。shift 项目把 `/operator-docs/*` rewrite 过来，所以构建时 `base` 是 `/operator-docs/`，产物放在 `dist/operator-docs/`（见 `vercel.json`）。
+- 密码由 `middleware.ts` 做 HTTP Basic Auth：用户名随便填，密码是 Vercel 环境变量 `DOCS_PASSWORD`。没设密码时整站拒绝访问。
+- 全站带 `X-Robots-Tag: noindex`，不进搜索引擎。
 
-1. 把这个文件夹推到一个 GitHub 仓库
-2. 仓库 Settings → Pages → Source 选 **GitHub Actions**
-3. 推送到 `main` 分支，`.github/workflows/deploy.yml` 会自动构建发布
-4. 访问 `https://<组织名>.github.io/<仓库名>/`
+### 更新内容
 
-工作流默认把 `DOCS_BASE` 设为 `/<仓库名>/`。
+```bash
+vercel deploy --prod --scope kevinkk2050-s-team
+```
 
-### 方案二：绑定自己的域名
+### 改密码
 
-建议用子域名，例如 `docs.openroboto.ai`。
-
-1. 新建 `docs/public/CNAME`，内容只有一行域名，如 `docs.openroboto.ai`
-2. 在仓库 Settings → Secrets and variables → Actions → Variables 里新建变量 `DOCS_BASE`，值为 `/`
-3. DNS 加一条 CNAME 记录，指向 `<组织名>.github.io`
-4. 仓库 Settings → Pages 里填上域名，勾选 Enforce HTTPS
-
-### 国内访问
-
-`github.io` 在中国大陆访问不稳定。要保证国内外都能打开，常见做法是：
-
-| 做法 | 说明 |
-|---|---|
-| 国内单独部署一份 | 把 `dist` 上传到阿里云 OSS、腾讯云 COS 等对象存储，开静态网站托管，前面加国内 CDN。**域名需要 ICP 备案** |
-| 海外用 GitHub Pages / Cloudflare Pages / Vercel | 照上面的方案部署 |
-| DNS 分区解析 | 同一个域名，国内解析到国内 CDN，海外解析到海外托管 |
-| 暂时没有备案 | 可以先用香港节点的服务器或 CDN，不需要备案，国内访问速度一般但比 github.io 稳定 |
-
-构建一次，同一份 `dist` 可以同时传到两边。
+```bash
+vercel env rm DOCS_PASSWORD production --scope kevinkk2050-s-team
+vercel env add DOCS_PASSWORD production --scope kevinkk2050-s-team   # 只用 ASCII 字符
+vercel deploy --prod --scope kevinkk2050-s-team                      # 重新部署才生效
+```
 
 ## 待定事项
 
