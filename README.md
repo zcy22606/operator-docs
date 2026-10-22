@@ -52,22 +52,36 @@ docs/
 
 线上地址：<https://shift.openroboto.ai/operator-docs/>，要密码。
 
-- 站点是 Vercel 项目 `operator-docs`（team `kevinkk2050-s-team`），生产域名 `operator-docs.vercel.app`。shift 项目把 `/operator-docs/*` rewrite 过来，所以构建时 `base` 是 `/operator-docs/`，产物放在 `dist/operator-docs/`（见 `vercel.json`）。
+- 站点是独立的 Vercel 项目 `operator-docs`。shift 项目把 `/operator-docs/*` rewrite 过来，所以构建时 `base` 是 `/operator-docs/`，产物放在 `dist/operator-docs/`（见 `vercel.json`）。
 - 密码由 `middleware.ts` 做 HTTP Basic Auth：用户名随便填，密码是 Vercel 环境变量 `DOCS_PASSWORD`。没设密码时整站拒绝访问。
 - 全站带 `X-Robots-Tag: noindex`，不进搜索引擎。
+
+### 第一次部署
+
+```bash
+npm ci
+vercel login
+vercel link --yes --project operator-docs
+vercel env add DOCS_PASSWORD production   # 访问密码，只用 ASCII 字符
+vercel deploy --prod
+```
+
+部署完把生产域名（`vercel inspect <部署地址>` 里 Aliases 的 `xxx.vercel.app`）告诉 shift 那边，改 rewrite 的目标。
+
+不要再往仓库传 `site-bundle.tar.gz`：解包会删掉 `vercel.json` 和 `middleware.ts`，上线后就没有密码了。直接改 `docs/` 下的 md。
 
 ### 更新内容
 
 ```bash
-vercel deploy --prod --scope kevinkk2050-s-team
+vercel deploy --prod
 ```
 
 ### 改密码
 
 ```bash
-vercel env rm DOCS_PASSWORD production --scope kevinkk2050-s-team
-vercel env add DOCS_PASSWORD production --scope kevinkk2050-s-team   # 只用 ASCII 字符
-vercel deploy --prod --scope kevinkk2050-s-team                      # 重新部署才生效
+vercel env rm DOCS_PASSWORD production
+vercel env add DOCS_PASSWORD production   # 只用 ASCII 字符
+vercel deploy --prod                      # 重新部署才生效
 ```
 
 ## 待定事项
